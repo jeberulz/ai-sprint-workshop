@@ -212,31 +212,17 @@ export default function Day4DeepDive() {
               </div>
             </div>
 
-            {/* Chart: Free vs Pro usage (projected) */}
-            <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
+            {/* Chart: MVP Progress */}
+            <div className="bg-black/40 border-white/10 border rounded-2xl px-4 py-4">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-geist tracking-tighter text-gray-400">Projected Plan Split</p>
+                <p className="text-xs font-geist tracking-tighter text-gray-400">MVP Progress</p>
                 <span className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] ring-1 ring-white/10 bg-white/5 text-gray-300">
-                  <BarChart2 className="w-3 h-3" />
-                  Sample data
+                  <Stars className="w-3 h-3" />
+                  Auto‑updated
                 </span>
               </div>
-              <div className="mt-3 flex items-center justify-center h-40">
-                <canvas ref={chartRef} className="max-w-full max-h-full" />
-                {/* Placeholder chart visualization */}
-                <div className="text-center space-y-2">
-                  <div className="flex items-center justify-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-gray-400/60"></div>
-                      <span className="text-xs text-gray-300">Free (65%)</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-emerald-400/70"></div>
-                      <span className="text-xs text-gray-300">Pro (35%)</span>
-                    </div>
-                  </div>
-                  <p className="text-[11px] text-gray-500">Chart visualization placeholder</p>
-                </div>
+              <div className="mt-3">
+                <canvas ref={chartRef} height="242" style={{display: 'block', boxSizing: 'border-box', height: '121px', width: '458px'}} width="917" className="" />
               </div>
             </div>
           </div>
