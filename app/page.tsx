@@ -7,6 +7,7 @@ import AgendaSection from '@/components/AgendaSection'
 import Day1DeepDive from '@/components/Day1DeepDive'
 import Day2DeepDive from '@/components/Day2DeepDive'
 import Day3DeepDive from '@/components/Day3DeepDive'
+import Day4DeepDive from '@/components/Day4DeepDive'
 import ApplySection from '@/components/ApplySection'
 import TestimonialsSection from '@/components/TestimonialsSection'
 import FAQSection from '@/components/FAQSection'
@@ -33,6 +34,7 @@ export default async function Home() {
         <Day1DeepDive />
         <Day2DeepDive />
         <Day3DeepDive />
+        <Day4DeepDive />
         <ApplySection />
         <TestimonialsSection 
           testimonials={testimonials}

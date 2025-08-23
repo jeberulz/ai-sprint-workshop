@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  outputFileTracingRoot: __dirname,
   images: {
     domains: ['images.unsplash.com', 'my.spline.design', 'cdn.sanity.io'],
     remotePatterns: [

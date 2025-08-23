@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { ArrowRight, CalendarRange, Cpu, Car, Stethoscope, Check, Wrench, Cloud } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { Hero } from '@/lib/sanity/types'
@@ -23,7 +22,7 @@ export default function HeroSection({ hero }: HeroSectionProps) {
       <div className="spline-container fixed top-0 w-full h-screen -z-10">
         <iframe 
           src={hero?.splineUrl || "https://my.spline.design/radialglass-20RYcJn9wbsEb5QEYkazHjpb"} 
-          frameBorder="0" 
+          style={{ border: 0 }} 
           width="100%" 
           height="100%"
         />
