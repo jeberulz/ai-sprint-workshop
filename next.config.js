@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  outputFileTracingRoot: __dirname,
   images: {
-    domains: ['images.unsplash.com', 'my.spline.design'],
+    domains: ['images.unsplash.com', 'my.spline.design', 'cdn.sanity.io'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -10,6 +11,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'my.spline.design',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
       }
     ]
   }
