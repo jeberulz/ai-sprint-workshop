@@ -1,12 +1,17 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import { getSiteSettings } from '@/lib/sanity/api'
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata: Metadata = {
-  title: "The AI Product Sprint — Design, Build & Launch in 5 Days",
-  description: "A live, hands-on sprint to design, build, and deploy an AI-powered application in 5 days. Become an AI‑native builder.",
+export async function generateMetadata(): Promise<Metadata> {
+  const siteSettings = await getSiteSettings()
+  
+  return {
+    title: siteSettings?.title || "The AI Product Sprint — Design, Build & Launch in 5 Days",
+    description: siteSettings?.description || "A live, hands-on sprint to design, build, and deploy an AI-powered application in 5 days. Become an AI‑native builder.",
+  }
 }
 
 export default function RootLayout({

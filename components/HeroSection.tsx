@@ -3,8 +3,13 @@
 import Image from 'next/image'
 import { ArrowRight, CalendarRange, Cpu, Car, Stethoscope, Check, Wrench, Cloud } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import type { Hero } from '@/lib/sanity/types'
 
-export default function HeroSection() {
+interface HeroSectionProps {
+  hero?: Hero | null
+}
+
+export default function HeroSection({ hero }: HeroSectionProps) {
   const handleNavClick = (href: string) => {
     const target = document.querySelector(href)
     if (target) {
@@ -17,7 +22,7 @@ export default function HeroSection() {
       {/* Spline Background */}
       <div className="spline-container fixed top-0 w-full h-screen -z-10">
         <iframe 
-          src="https://my.spline.design/radialglass-20RYcJn9wbsEb5QEYkazHjpb" 
+          src={hero?.splineUrl || "https://my.spline.design/radialglass-20RYcJn9wbsEb5QEYkazHjpb"} 
           frameBorder="0" 
           width="100%" 
           height="100%"
@@ -35,17 +40,17 @@ export default function HeroSection() {
           <div className="flex flex-col lg:flex-row items-center gap-10">
             <div className="flex-1 text-center lg:text-left">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl leading-tight tracking-tight font-semibold font-geist" style={{fontFamily: '"Plus Jakarta Sans", Inter, sans-serif', fontWeight: 600}}>
-                The AI Product Sprint: Design, Build & Launch a Live App in 5 Days.
+                {hero?.title || "The AI Product Sprint: Design, Build & Launch a Live App in 5 Days."}
               </h1>
               <p className="mt-6 text-lg max-w-2xl mx-auto lg:mx-0 font-geist tracking-tighter text-gray-300">
-                Stop just <span className="font-geist tracking-tighter">using</span> AI and start <span className="font-geist tracking-tighter">building with it</span>. This is a live, hands-on sprint where I will guide you from a blank canvas to a deployed, AI-powered application. You will learn to leverage a full suite of AI tools for research, branding, design, and even code.
+                {hero?.description || "Stop just using AI and start building with it. This is a live, hands-on sprint where I will guide you from a blank canvas to a deployed, AI-powered application. You will learn to leverage a full suite of AI tools for research, branding, design, and even code."}
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                 <Button
                   onClick={() => handleNavClick('#apply')}
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm transition-all hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 font-geist tracking-tighter bg-blue-400 text-black hover:bg-blue-300"
                 >
-                  Join the Sprint
+                  {hero?.primaryButtonText || "Join the Sprint"}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
                 <Button
@@ -53,12 +58,12 @@ export default function HeroSection() {
                   variant="outline"
                   className="inline-flex items-center gap-2 transition-all border rounded-full px-5 py-3 backdrop-blur-lg font-geist tracking-tighter hover:bg-white/10 text-gray-100 bg-white/5 border-white/10"
                 >
-                  See the plan
+                  {hero?.secondaryButtonText || "See the plan"}
                   <CalendarRange className="w-4 h-4" />
                 </Button>
               </div>
               <p className="mt-3 text-sm font-geist tracking-tighter text-gray-400">
-                Limited spots. The next sprint begins [Date].
+                {hero?.availabilityText || "Limited spots. The next sprint begins [Date]."}
               </p>
             </div>
 
@@ -71,11 +76,11 @@ export default function HeroSection() {
                       <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg ring-1 bg-white/5 ring-white/10">
                         <Cpu className="w-4.5 h-4.5" />
                       </span>
-                      <p className="text-sm font-geist tracking-tighter">AI Car Diagnostic App</p>
+                      <p className="text-sm font-geist tracking-tighter">{hero?.demoApp?.title || "AI Car Diagnostic App"}</p>
                     </div>
                     <span className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs ring-1 font-geist tracking-tighter bg-emerald-400/10 text-emerald-300 ring-emerald-400/20">
                       <Cloud className="w-3.5 h-3.5" />
-                      Live
+                      {hero?.demoApp?.status === 'live' ? 'Live' : hero?.demoApp?.status === 'demo' ? 'Demo' : hero?.demoApp?.status === 'development' ? 'Development' : 'Live'}
                     </span>
                   </div>
                   <div className="p-4 grid sm:grid-cols-2 gap-4">
@@ -84,12 +89,12 @@ export default function HeroSection() {
                         <span className="inline-flex h-7 w-7 items-center justify-center rounded-md ring-1 bg-white/5 ring-white/10">
                           <Car className="w-4 h-4" />
                         </span>
-                        <p className="text-sm font-geist tracking-tighter">Describe your issue</p>
+                        <p className="text-sm font-geist tracking-tighter">{hero?.demoApp?.inputPlaceholder || "Describe your issue"}</p>
                       </div>
                       <div className="mt-3 rounded-lg border p-3 border-white/10 bg-white/5">
                         <p className="text-xs font-geist tracking-tighter text-gray-400">Prompt</p>
                         <p className="text-sm mt-1 font-geist tracking-tighter text-gray-100">
-                          "High‑pitched squeal when braking, worse in rain."
+                          {hero?.demoApp?.inputExample || '"High‑pitched squeal when braking, worse in rain."'}
                         </p>
                       </div>
                       <Button
@@ -113,18 +118,31 @@ export default function HeroSection() {
                         <p className="text-sm font-geist tracking-tighter">AI diagnosis</p>
                       </div>
                       <ul className="mt-3 space-y-2 text-sm">
-                        <li className="flex items-start gap-2 font-geist tracking-tighter">
-                          <Check className="mt-0.5 w-4 h-4 text-emerald-300" />
-                          Likely brake wear indicator contacting rotor.
-                        </li>
-                        <li className="flex items-start gap-2 font-geist tracking-tighter">
-                          <Check className="mt-0.5 w-4 h-4 text-emerald-300" />
-                          Risk: Low–Medium. Inspect pads and rotors.
-                        </li>
-                        <li className="flex items-start gap-2 font-geist tracking-tighter">
-                          <Wrench className="mt-0.5 w-4 h-4 text-indigo-300" />
-                          DIY steps + shop estimate provided.
-                        </li>
+                        {hero?.demoApp?.analysisResults?.map((result, index) => (
+                          <li key={index} className="flex items-start gap-2 font-geist tracking-tighter">
+                            {index === hero.demoApp.analysisResults.length - 1 ? (
+                              <Wrench className="mt-0.5 w-4 h-4 text-indigo-300" />
+                            ) : (
+                              <Check className="mt-0.5 w-4 h-4 text-emerald-300" />
+                            )}
+                            {result}
+                          </li>
+                        )) || (
+                          <>
+                            <li className="flex items-start gap-2 font-geist tracking-tighter">
+                              <Check className="mt-0.5 w-4 h-4 text-emerald-300" />
+                              Likely brake wear indicator contacting rotor.
+                            </li>
+                            <li className="flex items-start gap-2 font-geist tracking-tighter">
+                              <Check className="mt-0.5 w-4 h-4 text-emerald-300" />
+                              Risk: Low–Medium. Inspect pads and rotors.
+                            </li>
+                            <li className="flex items-start gap-2 font-geist tracking-tighter">
+                              <Wrench className="mt-0.5 w-4 h-4 text-indigo-300" />
+                              DIY steps + shop estimate provided.
+                            </li>
+                          </>
+                        )}
                       </ul>
                     </div>
                   </div>
