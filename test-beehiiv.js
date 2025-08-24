@@ -28,25 +28,31 @@ const testBeehiivIntegration = async () => {
   }
   
   try {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10s timeout
-
     const response = await fetch('http://localhost:3000/api/subscribe', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify(testData),
+      signal: AbortSignal.timeout(10000) // 10s timeout
+    })
+    
+    // Clone response for fallback in case JSON parsing fails
+    const responseClone = response.clone()
+    
+    // Parse response body only once
     let result
     try {
       result = await response.json()
     } catch (parseError) {
-      result = { error: 'Invalid JSON response', rawResponse: await response.text() }
+      // Use cloned response to get text when JSON parsing fails
+      const rawText = await responseClone.text()
+      result = { 
+        error: 'Invalid JSON response', 
+        rawResponse: rawText,
+        parseError: parseError.message 
+      }
     }
-      signal: controller.signal
-    })
-
-    clearTimeout(timeoutId)
-    const result = await response.json()
     
     console.log('📊 Response Status:', response.status)
     console.log('📄 Response Body:', JSON.stringify(result, null, 2))
@@ -66,5 +72,6 @@ const testBeehiivIntegration = async () => {
       console.error('❌ Network Error:', error.message)
     }
   }
+}
 
 testBeehiivIntegration()

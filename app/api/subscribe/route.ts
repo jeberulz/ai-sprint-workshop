@@ -30,8 +30,7 @@ export async function POST(request: NextRequest) {
       console.error('Missing Beehiiv configuration:', {
         hasApiKey: !!apiKey,
         hasPublicationId: !!publicationId
-    const result = await beehiivResponse.json()
-    console.log('Successfully created Beehiiv subscription'))
+      })
       return NextResponse.json(
         { error: 'Server configuration error: Missing Beehiiv API credentials' },
         { status: 500 }
@@ -79,13 +78,12 @@ export async function POST(request: NextRequest) {
       {
         method: 'POST',
         headers: {
-      if (!beehiivResponse.ok) {
-        const errorData = await beehiivResponse.text()
-        console.error('Beehiiv API error:', {
-          status: beehiivResponse.status,
-          statusText: beehiivResponse.statusText
-        })
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
       }
+    )
 
     if (!beehiivResponse.ok) {
       const errorData = await beehiivResponse.text()
@@ -145,13 +143,13 @@ export async function POST(request: NextRequest) {
             `https://api.beehiiv.com/v2/publications/${publicationId}/automations/${automationId}/journeys`,
             {
               method: 'POST',
-  } catch (error) {
-    console.error('Subscription error:', error instanceof Error ? error.message : 'Unknown error')
-    return NextResponse.json(
-      { error: 'Internal server error. Please try again.' },
-      { status: 500 }
-    )
-  }
+              headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                subscription_id: result.data.id
+              }),
             }
           )
 
