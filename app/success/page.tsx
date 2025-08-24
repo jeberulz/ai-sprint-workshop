@@ -50,11 +50,11 @@ export default function SuccessPage() {
           </div>
           
           <div className="flex gap-4 justify-center">
-            <Link href="/">
-              <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
+            <Button asChild variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
+              <Link href="/">
                 Back to Home
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

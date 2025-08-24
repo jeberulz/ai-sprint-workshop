@@ -50,17 +50,13 @@ export default function CancelPage() {
           </div>
           
           <div className="flex gap-4 justify-center">
-            <Link href="/#apply">
-              <Button className="bg-blue-400 text-black hover:bg-blue-300">
-                Try Payment Again
-              </Button>
-            </Link>
+            <Button asChild className="bg-blue-400 text-black hover:bg-blue-300">
+              <Link href="/#apply">Try Payment Again</Link>
+            </Button>
             
-            <Link href="/">
-              <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
-                Back to Home
-              </Button>
-            </Link>
+            <Button asChild variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
+              <Link href="/">Back to Home</Link>
+            </Button>
           </div>
         </div>
       </div>
