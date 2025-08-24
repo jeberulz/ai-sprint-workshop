@@ -118,63 +118,119 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 6. **Zapier Automation**: Auto-invite to Skool community on payment success
 7. **Success Page**: Confirmation with next steps
 
-## Key Features
+## 🔧 Development Commands
 
-### 🎨 Design System
-- Custom color palette with dark theme
-- Multiple font families with proper fallbacks
-- Consistent spacing and border radius
-- Glassmorphism effects and subtle animations
+```bash
+# Development
+npm run dev
 
-### 📱 Responsive Design
-- Mobile-first approach
-- Responsive grid layouts
-- Mobile navigation menu
-- Optimized images with Next.js Image component
+# Build for production
+npm run build
 
-### ⚡ Performance
-- Next.js 14 with TypeScript
-- Optimized fonts with `next/font`
-- Efficient component structure
-- Lazy loading for images
+# Start production server  
+npm start
 
-### 🎯 Interactive Elements
-- Smooth scroll navigation
-- Progress bar tracking page scroll
-- Expandable FAQ section
-- Form validation and submission
-- Copy-to-clipboard functionality
+# Run linter
+npm run lint
+```
 
-## Customization
+## 🛠 API Integration Details
 
-### Fonts
-The project uses multiple Google Fonts configured in `tailwind.config.ts`. To add new fonts:
+### Beehiiv API (`/api/subscribe`)
+- **Endpoint**: `POST /api/subscribe`
+- **Purpose**: Create subscribers and enroll in automations
+- **Request**: `{ name: string, email: string }`
+- **Features**: Custom fields, automation enrollment, error handling
+- **Response**: Success/error with subscriber details
 
-1. Add the font import to `app/globals.css`
-2. Add the font family to `tailwind.config.ts`
-3. Use the font class in your components
+### Environment Variables
+- `BEEHIIV_API_KEY`: Your Beehiiv API key
+- `BEEHIIV_PUBLICATION_ID`: Publication ID (format: `pub_xxx`)
+- `BEEHIIV_AUTOMATION_IDS`: Comma-separated automation IDs
+- `NEXT_PUBLIC_STRIPE_PAYMENT_LINK`: Stripe Payment Link URL
 
-### Colors
-Customize the color scheme in `tailwind.config.ts` and `app/globals.css`. The design uses:
-- Dark backgrounds (black, gray-950, gray-900)
-- Blue accent colors (blue-400, indigo-600)
-- Subtle borders (white/10 opacity)
+## 🔍 Troubleshooting
 
-### Components
-All components are modular and can be easily customized:
-- Modify content in individual component files
-- Adjust styling with Tailwind classes
-- Add new sections by creating new components
+### Common Issues
 
-## Deployment
+**Email Not Appearing in Beehiiv**
+- Check API key permissions in Beehiiv settings
+- Verify custom field "name" exists in your publication
+- Check if double opt-in is enabled (subscribers appear as "pending")
 
-The project is ready for deployment on Vercel, Netlify, or any hosting platform that supports Next.js:
+**Payment Redirect Not Working**
+- Verify `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` in environment
+- Check browser console for JavaScript errors
+- Ensure form submits successfully before redirect
 
+**Automation Not Triggering**
+- Confirm automation uses "Add by API" trigger
+- Verify automation is published/active in Beehiiv
+- Check automation ID format matches environment variable
+
+### Debug Mode
+Development mode includes detailed logging. Check terminal output when testing the subscription flow.
+
+## 🎨 Customization
+
+### Updating Workshop Price
+1. Edit button text in `components/ApplySection.tsx` (line ~158)
+2. Update Stripe Payment Link price in Stripe Dashboard
+3. Rebuild and redeploy
+
+### Adding New Automations  
+1. Create automation in Beehiiv with "Add by API" trigger
+2. Add automation ID to `BEEHIIV_AUTOMATION_IDS` (comma-separated)
+3. Test via form submission
+
+### Styling Customization
+- **Fonts**: Configured in `tailwind.config.ts` with Google Fonts
+- **Colors**: Dark theme with blue accents, customizable in Tailwind config
+- **Components**: Modular design, easy to modify individual sections
+
+## 🚀 Deployment
+
+### Quick Deploy
 ```bash
 npm run build
 npm start
 ```
 
-## License
+### Vercel Deployment
+1. Connect your GitHub repository to Vercel
+2. Add environment variables in Vercel dashboard
+3. Deploy automatically on push
 
-This project is created for educational purposes as part of the AI Product Sprint course.
+### Environment Variables for Production
+Remember to add all environment variables to your hosting platform:
+- Beehiiv API credentials
+- Stripe Payment Link
+- Sanity CMS credentials (if using)
+
+## 📊 Analytics & Optimization
+
+The conversion funnel is designed for easy tracking:
+- **Form submissions** → Beehiiv subscriber count
+- **Payment completions** → Stripe dashboard
+- **Community joins** → Skool member count
+
+### A/B Testing Ideas
+- Different pricing strategies
+- Alternative button copy
+- Various form layouts
+- Different value propositions
+
+## 🔐 Security Notes
+
+- API keys are server-side only (not exposed to frontend)
+- Stripe handles all payment security (PCI compliance)
+- Webhook verification prevents unauthorized requests
+- HTTPS required for production
+
+## 📞 Support
+
+For development questions, refer to `CLAUDE.md` for detailed context and troubleshooting information.
+
+## 📄 License
+
+This project is created for the AI Product Sprint workshop. Feel free to use as a template for your own workshops or products.
