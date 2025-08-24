@@ -62,7 +62,7 @@ export default function HeroSection({ hero }: HeroSectionProps) {
                 </Button>
               </div>
               <p className="mt-3 text-sm font-geist tracking-tighter text-gray-400">
-                {hero?.availabilityText || "Limited spots. The next sprint begins [Date]."}
+                {hero?.availabilityText || "Limited spots. The next sprint begins [29th of September, 2025]."}
               </p>
             </div>
 
