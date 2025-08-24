@@ -28,14 +28,24 @@ const testBeehiivIntegration = async () => {
   }
   
   try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10s timeout
+
     const response = await fetch('http://localhost:3000/api/subscribe', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(testData),
+    let result
+    try {
+      result = await response.json()
+    } catch (parseError) {
+      result = { error: 'Invalid JSON response', rawResponse: await response.text() }
+    }
+      signal: controller.signal
     })
-    
+
+    clearTimeout(timeoutId)
     const result = await response.json()
     
     console.log('📊 Response Status:', response.status)
@@ -48,9 +58,13 @@ const testBeehiivIntegration = async () => {
     }
     
   } catch (error) {
-    console.error('❌ Network Error:', error.message)
-    console.log('Make sure your development server is running: npm run dev')
+    if (error.name === 'AbortError') {
+      console.error('❌ Request Timeout: The API request took too long to respond.')
+    } else if (error.code === 'ECONNREFUSED') {
+      console.error('❌ Connection Refused: Make sure your development server is running: npm run dev')
+    } else {
+      console.error('❌ Network Error:', error.message)
+    }
   }
-}
 
 testBeehiivIntegration()

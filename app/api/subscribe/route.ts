@@ -30,7 +30,8 @@ export async function POST(request: NextRequest) {
       console.error('Missing Beehiiv configuration:', {
         hasApiKey: !!apiKey,
         hasPublicationId: !!publicationId
-      })
+    const result = await beehiivResponse.json()
+    console.log('Successfully created Beehiiv subscription'))
       return NextResponse.json(
         { error: 'Server configuration error: Missing Beehiiv API credentials' },
         { status: 500 }
@@ -60,22 +61,31 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    console.log('Beehiiv API request:', {
-      url: `https://api.beehiiv.com/v2/publications/${publicationId}/subscriptions`,
-      body: requestBody
-    })
+    // Environment-gated logging - only log detailed info in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Beehiiv subscription request (dev only):', {
+        status: 'attempting',
+        publicationId: publicationId.substring(0, 8) + '...',
+        hasEmail: !!requestBody.email,
+        hasName: !!requestBody.custom_fields?.[0]?.value,
+        automationCount: requestBody.automation_ids?.length || 0
+      })
+    } else {
+      console.log('Beehiiv subscription request initiated')
+    }
 
     const beehiivResponse = await fetch(
       `https://api.beehiiv.com/v2/publications/${publicationId}/subscriptions`,
       {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
+      if (!beehiivResponse.ok) {
+        const errorData = await beehiivResponse.text()
+        console.error('Beehiiv API error:', {
+          status: beehiivResponse.status,
+          statusText: beehiivResponse.statusText
+        })
       }
-    )
 
     if (!beehiivResponse.ok) {
       const errorData = await beehiivResponse.text()
@@ -99,42 +109,85 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await beehiivResponse.json()
-    console.log('Beehiiv API success:', result)
+    
+    // Log success with minimal sensitive data exposure
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Beehiiv API success (dev only):', {
+        status: 'success',
+        subscriberId: result.data?.id ? result.data.id.substring(0, 8) + '...' : 'unknown',
+        hasData: !!result.data
+      })
+    } else {
+      console.log('Beehiiv subscription successful')
+    }
     
     // If automation enrollment was requested, try the dedicated automation endpoint
     if (parsedAutomationIds.length > 0 && result.data && result.data.id) {
-      console.log('Attempting automation enrollment via dedicated endpoint for subscriber:', result.data.id)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Attempting automation enrollment (dev only):', {
+          subscriberId: result.data.id.substring(0, 8) + '...',
+          automationCount: parsedAutomationIds.length
+        })
+      } else {
+        console.log('Attempting automation enrollment for subscriber')
+      }
       
       for (const automationId of parsedAutomationIds) {
         try {
-          console.log(`Adding subscriber ${result.data.id} to automation ${automationId}`)
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`Adding subscriber to automation (dev only):`, {
+              subscriberId: result.data.id.substring(0, 8) + '...',
+              automationId: automationId.substring(0, 8) + '...'
+            })
+          }
           
           const automationResponse = await fetch(
             `https://api.beehiiv.com/v2/publications/${publicationId}/automations/${automationId}/journeys`,
             {
               method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                subscription_id: result.data.id
-              }),
+  } catch (error) {
+    console.error('Subscription error:', error instanceof Error ? error.message : 'Unknown error')
+    return NextResponse.json(
+      { error: 'Internal server error. Please try again.' },
+      { status: 500 }
+    )
+  }
             }
           )
 
           if (automationResponse.ok) {
             const automationResult = await automationResponse.json()
-            console.log(`Successfully enrolled in automation ${automationId}:`, automationResult)
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`Successfully enrolled in automation (dev only):`, {
+                automationId: automationId.substring(0, 8) + '...',
+                hasResult: !!automationResult
+              })
+            } else {
+              console.log('Successfully enrolled subscriber in automation')
+            }
           } else {
             const errorData = await automationResponse.text()
-            console.error(`Failed to enroll in automation ${automationId}:`, {
-              status: automationResponse.status,
-              error: errorData
-            })
+            if (process.env.NODE_ENV === 'development') {
+              console.error(`Failed to enroll in automation (dev only):`, {
+                automationId: automationId.substring(0, 8) + '...',
+                status: automationResponse.status,
+                error: errorData
+              })
+            } else {
+              console.error('Failed to enroll subscriber in automation:', {
+                status: automationResponse.status
+              })
+            }
           }
         } catch (automationError) {
-          console.error(`Error enrolling in automation ${automationId}:`, automationError)
+          if (process.env.NODE_ENV === 'development') {
+            console.error(`Error enrolling in automation (dev only):`, {
+              automationId: automationId.substring(0, 8) + '...',
+              error: automationError
+            })
+          } else {
+            console.error('Error enrolling subscriber in automation')
+          }
         }
       }
     }
