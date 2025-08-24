@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, CalendarRange, Cpu, Car, Stethoscope, Check, Wrench, Cloud } from 'lucide-react'
+import { ArrowRight, CalendarRange, Cpu, Car, Stethoscope, Check, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { Hero } from '@/lib/sanity/types'
 
@@ -78,7 +78,11 @@ export default function HeroSection({ hero }: HeroSectionProps) {
                       <p className="text-sm font-geist tracking-tighter">{hero?.demoApp?.title || "AI Car Diagnostic App"}</p>
                     </div>
                     <span className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs ring-1 font-geist tracking-tighter bg-emerald-400/10 text-emerald-300 ring-emerald-400/20">
-                      <Cloud className="w-3.5 h-3.5" />
+                      <div className="relative">
+                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                        <div className="absolute inset-0 w-2 h-2 bg-red-500 rounded-full animate-ping opacity-75"></div>
+                        <div className="absolute inset-0 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                      </div>
                       {hero?.demoApp?.status === 'live' ? 'Live' : hero?.demoApp?.status === 'demo' ? 'Demo' : hero?.demoApp?.status === 'development' ? 'Development' : 'Live'}
                     </span>
                   </div>
