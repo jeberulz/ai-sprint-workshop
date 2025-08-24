@@ -1,64 +1,122 @@
-# AI Product Sprint
+# AI Workshop Landing Page & Conversion Funnel
 
-A modern Next.js landing page for the AI Product Sprint course, built with Tailwind CSS and shadcn/ui components.
+A complete landing page with integrated payment processing and automation for the AI Product Sprint workshop. Features email collection, payment processing, and automated community access.
 
-## Features
+## 🚀 Features
 
-- ✨ **Modern Design**: Dark theme with gradient backgrounds and glassmorphism effects
-- 📱 **Responsive**: Mobile-first design that works on all devices
-- 🎯 **Interactive**: Smooth scrolling navigation, animated progress bar
-- 🎨 **Custom Fonts**: Multiple Google Fonts including Geist, Jakarta Sans, and more
-- ⚡ **Performance**: Built with Next.js 14 for optimal performance
-- 🧩 **Component-based**: Modular components using shadcn/ui
+### Core Functionality
+- ✨ **Modern Landing Page**: Dark theme with gradient backgrounds and glassmorphism effects
+- 📧 **Email Integration**: Beehiiv API for subscriber management and automation
+- 💳 **Payment Processing**: Stripe Payment Links for secure checkout
+- 🏘️ **Community Access**: Automated Skool community invites via Zapier
+- 📱 **Mobile Optimized**: Responsive design with one-click checkout
 
-## Tech Stack
+### Technical Features
+- 🎯 **Complete Conversion Funnel**: Form → Email Capture → Payment → Automation
+- ⚡ **Serverless Architecture**: No database required, uses external APIs
+- 🛡️ **Secure Processing**: Webhook verification and encrypted data handling
+- 📊 **Analytics Ready**: Track conversion from lead to customer
+- 🎨 **Professional UX**: Success/cancel pages with clear next steps
 
-- **Framework**: Next.js 14 with TypeScript
+## 🛠 Tech Stack
+
+- **Framework**: Next.js 15 with TypeScript and App Router
 - **Styling**: Tailwind CSS with custom configurations
-- **UI Components**: shadcn/ui
-- **Icons**: Lucide React
-- **Animation**: Framer Motion (optional)
-- **Fonts**: Google Fonts (Geist, Plus Jakarta Sans, Inter)
+- **UI Components**: shadcn/ui components
+- **CMS**: Sanity Studio for content management
+- **Email Platform**: Beehiiv API integration
+- **Payments**: Stripe Payment Links
+- **Automation**: Zapier workflows
+- **Community**: Skool integration
 
-## Getting Started
+## 🚀 Quick Setup
 
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+### 1. Install Dependencies
+```bash
+npm install
+```
 
-2. **Run the development server**:
-   ```bash
-   npm run dev
-   ```
+### 2. Environment Configuration
+Copy `.env.example` to `.env.local` and configure:
 
-3. **Open your browser**:
-   Navigate to [http://localhost:3000](http://localhost:3000)
+```env
+# Beehiiv API Configuration
+BEEHIIV_API_KEY=your_beehiiv_api_key
+BEEHIIV_PUBLICATION_ID=pub_your_publication_id  
+BEEHIIV_AUTOMATION_IDS=aut_your_automation_id
 
-## Project Structure
+# Stripe Configuration
+NEXT_PUBLIC_STRIPE_PAYMENT_LINK=https://buy.stripe.com/your_payment_link
+
+# Sanity CMS (Optional)
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
+NEXT_PUBLIC_SANITY_DATASET=production
+```
+
+### 3. Third-Party Setup
+
+#### Beehiiv Setup
+1. Create Beehiiv account and publication
+2. Generate API key in Settings → API
+3. Create custom field named "name" 
+4. Create automation with "Add by API" trigger
+
+#### Stripe Setup  
+1. Create Stripe Payment Link for your workshop
+2. Set success URL: `https://yourdomain.com/success`
+3. Set cancel URL: `https://yourdomain.com/cancel`
+4. Copy Payment Link to environment variables
+
+#### Zapier Setup (Optional)
+1. Create Zap: Stripe Payment Success → Skool Invite
+2. Configure trigger for new Stripe payments
+3. Set action to invite customer email to Skool community
+
+### 4. Run Development Server
+```bash
+npm run dev
+```
+
+Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 📁 Project Structure
 
 ```
 ├── app/
-│   ├── globals.css          # Global styles and font imports
-│   ├── layout.tsx           # Root layout with metadata
-│   └── page.tsx             # Main page component
+│   ├── api/subscribe/route.ts    # Beehiiv API integration
+│   ├── success/page.tsx          # Payment success page
+│   ├── cancel/page.tsx           # Payment cancellation page
+│   ├── studio/[[...tool]]/       # Sanity Studio CMS
+│   ├── globals.css               # Global styles and font imports
+│   ├── layout.tsx                # Root layout with metadata
+│   └── page.tsx                  # Main landing page
 ├── components/
-│   ├── ui/                  # shadcn/ui components
-│   ├── Navigation.tsx       # Header navigation with mobile menu
-│   ├── HeroSection.tsx      # Hero section with Spline background
-│   ├── WhySection.tsx       # Problem/agitation section
-│   ├── OutcomesSection.tsx  # Solution/outcomes section
-│   ├── AgendaSection.tsx    # 5-day agenda overview
-│   ├── Day1DeepDive.tsx     # Detailed Day 1 breakdown
-│   ├── ApplySection.tsx     # CTA with application form
-│   ├── TestimonialsSection.tsx # User testimonials
-│   ├── FAQSection.tsx       # Expandable FAQ
-│   ├── Footer.tsx           # Site footer
-│   └── ScrollProgress.tsx   # Scroll progress indicator
+│   ├── ui/                       # shadcn/ui components (Button, Input, etc.)
+│   ├── ApplySection.tsx          # Main conversion form with payment
+│   ├── Navigation.tsx            # Header navigation
+│   ├── HeroSection.tsx           # Landing hero section
+│   ├── AgendaSection.tsx         # Workshop agenda overview
+│   ├── TestimonialsSection.tsx   # Social proof section
+│   ├── FAQSection.tsx            # Frequently asked questions
+│   ├── Footer.tsx                # Site footer
+│   └── ScrollProgress.tsx        # Scroll progress indicator
 ├── lib/
-│   └── utils.ts             # Utility functions for className merging
-└── tailwind.config.ts       # Tailwind configuration with custom fonts
+│   ├── sanity/                   # Sanity CMS configuration
+│   └── utils.ts                  # Utility functions
+├── .env.example                  # Environment variables template
+├── CLAUDE.md                     # Development context for Claude
+└── tailwind.config.ts            # Tailwind configuration
 ```
+
+## 🎯 Conversion Funnel Flow
+
+1. **Landing Page**: User explores workshop content
+2. **Apply Section**: User fills name + email form  
+3. **Beehiiv Integration**: Email captured and added to automation
+4. **Payment Redirect**: Automatic redirect to Stripe checkout
+5. **Stripe Processing**: Secure payment handling
+6. **Zapier Automation**: Auto-invite to Skool community on payment success
+7. **Success Page**: Confirmation with next steps
 
 ## Key Features
 
