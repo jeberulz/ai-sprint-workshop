@@ -10,11 +10,36 @@ export default function ApplySection() {
     name: '',
     email: ''
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [message, setMessage] = useState({ type: '', text: '' })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission here
-    console.log('Form submitted:', formData)
+    setIsSubmitting(true)
+    setMessage({ type: '', text: '' })
+
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: 'Successfully subscribed! Check your email for confirmation.' })
+        setFormData({ name: '', email: '' })
+      } else {
+        setMessage({ type: 'error', text: result.error || 'Something went wrong. Please try again.' })
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Network error. Please check your connection and try again.' })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,6 +96,15 @@ export default function ApplySection() {
                 </div>
 
                 <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
+                  {message.text && (
+                    <div className={`p-3 rounded-md text-sm ${
+                      message.type === 'success' 
+                        ? 'bg-green-900/20 border border-green-500/30 text-green-300' 
+                        : 'bg-red-900/20 border border-red-500/30 text-red-300'
+                    }`}>
+                      {message.text}
+                    </div>
+                  )}
                   <div>
                     <label htmlFor="name" className="sr-only">Name</label>
                     <div className="relative">
@@ -82,10 +116,11 @@ export default function ApplySection() {
                         name="name"
                         type="text"
                         required
+                        disabled={isSubmitting}
                         placeholder="Your name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full pl-9 pr-3 py-2 rounded-md bg-black/40 border border-white/10 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full pl-9 pr-3 py-2 rounded-md bg-black/40 border border-white/10 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                     </div>
                   </div>
@@ -100,18 +135,20 @@ export default function ApplySection() {
                         name="email"
                         type="email"
                         required
+                        disabled={isSubmitting}
                         placeholder="you@example.com"
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full pl-9 pr-3 py-2 rounded-md bg-black/40 border border-white/10 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full pl-9 pr-3 py-2 rounded-md bg-black/40 border border-white/10 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                     </div>
                   </div>
                   <Button
                     type="submit"
-                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-geist tracking-tighter transition-all bg-blue-400 text-black hover:bg-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={isSubmitting}
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-geist tracking-tighter transition-all bg-blue-400 text-black hover:bg-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-400"
                   >
-                    Apply now
+                    {isSubmitting ? 'Subscribing...' : 'Apply now'}
                     <Rocket className="w-4 h-4" />
                   </Button>
                   <p className="text-[12px] text-gray-400">You'll receive a confirmation and next steps within 24 hours.</p>
