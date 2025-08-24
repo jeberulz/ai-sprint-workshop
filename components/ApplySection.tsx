@@ -30,8 +30,15 @@ export default function ApplySection() {
       const result = await response.json()
 
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Successfully subscribed! Check your email for confirmation.' })
-        setFormData({ name: '', email: '' })
+        setMessage({ type: 'success', text: 'Email captured! Redirecting to secure checkout...' })
+        
+        // Redirect to Stripe Payment Link after successful Beehiiv subscription
+        setTimeout(() => {
+          const stripePaymentLink = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || 'https://buy.stripe.com/test_replace_with_your_link'
+          window.location.href = stripePaymentLink
+        }, 1500) // Brief delay to show success message
+        
+        // Don't reset form data yet - they might come back
       } else {
         setMessage({ type: 'error', text: result.error || 'Something went wrong. Please try again.' })
       }
@@ -148,10 +155,10 @@ export default function ApplySection() {
                     disabled={isSubmitting}
                     className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-geist tracking-tighter transition-all bg-blue-400 text-black hover:bg-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-400"
                   >
-                    {isSubmitting ? 'Subscribing...' : 'Apply now'}
+                    {isSubmitting ? 'Processing...' : 'Join Workshop - $297'}
                     <Rocket className="w-4 h-4" />
                   </Button>
-                  <p className="text-[12px] text-gray-400">You'll receive a confirmation and next steps within 24 hours.</p>
+                  <p className="text-[12px] text-gray-400">Secure your spot with instant access to community and materials.</p>
                 </form>
               </div>
             </div>
