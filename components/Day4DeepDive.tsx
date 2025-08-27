@@ -18,7 +18,8 @@ import {
   FileCode2, 
   Copy, 
   Play, 
-  Zap 
+  Zap,
+  Video
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -28,6 +29,10 @@ export default function Day4DeepDive() {
   const [cost, setCost] = useState('')
   const [output, setOutput] = useState('Output will appear here...')
   const [outputType, setOutputType] = useState('default') // 'default', 'success', 'error'
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
+  const [isInView, setIsInView] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const sectionRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<HTMLCanvasElement>(null)
 
   const handleNavClick = (href: string) => {
@@ -67,6 +72,44 @@ export default function Day4DeepDive() {
     }
   }
 
+  const handleVideoPlay = () => {
+    setIsVideoPlaying(true)
+    if (videoRef.current) {
+      videoRef.current.muted = false
+      videoRef.current.play()
+    }
+  }
+
+  // Intersection Observer for auto-play
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting)
+        if (entry.isIntersecting && !isVideoPlaying && videoRef.current) {
+          // Auto-play muted when section comes into view
+          videoRef.current.muted = true
+          videoRef.current.play().catch(() => {
+            // Auto-play failed, which is fine - user can still click play
+          })
+        } else if (!entry.isIntersecting && videoRef.current && !isVideoPlaying) {
+          // Pause when out of view if still in auto-play mode
+          videoRef.current.pause()
+        }
+      },
+      { threshold: 0.5 } // Trigger when 50% of the section is visible
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current)
+      }
+    }
+  }, [isVideoPlaying])
+
   // Chart initialization (placeholder for Chart.js)
   useEffect(() => {
     // In a real implementation, you'd initialize Chart.js here
@@ -74,7 +117,7 @@ export default function Day4DeepDive() {
   }, [])
 
   return (
-    <section id="day4" className="bg-gray-950 pt-16 pb-16">
+    <section ref={sectionRef} id="day4" className="bg-gray-950 pt-16 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header: different structure from Day 3 */}
         <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-gray-950 to-black/40 p-5">
@@ -309,20 +352,56 @@ export default function Day4DeepDive() {
                 </div>
               </div>
 
-              {/* Inline visual */}
+              {/* Video player for backend session */}
               <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                <Image 
-                  src="https://images.unsplash.com/photo-1640906152676-dace6710d24b?w=2160&q=80" 
-                  alt="Backend & business logic wiring preview" 
-                  width={2160}
-                  height={1440}
-                  className="w-full h-64 sm:h-72 object-cover"
-                />
-                <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/70 to-transparent">
-                  <div className="inline-flex items-center gap-2 rounded-md px-2 py-1 text-xs ring-1 ring-white/10 bg-white/10 text-gray-200">
-                    <Zap className="w-3.5 h-3.5 text-amber-300" />
-                    Logic → Pricing in 60 minutes
-                  </div>
+                <div className="relative h-64 sm:h-72">
+                  {!isVideoPlaying ? (
+                    <>
+                      <Image 
+                        src="https://images.unsplash.com/photo-1640906152676-dace6710d24b?w=2160&q=80" 
+                        alt="Backend & business logic wiring preview" 
+                        width={2160}
+                        height={1440}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/40"></div>
+                      <button 
+                        type="button" 
+                        onClick={handleVideoPlay}
+                        className="absolute inset-0 m-auto h-16 w-16 sm:h-18 sm:w-18 inline-flex items-center justify-center rounded-full bg-white/10 ring-1 ring-white/20 backdrop-blur hover:bg-white/20 transition"
+                      >
+                        <Play className="w-6 h-6 text-white" />
+                      </button>
+                      <div className="absolute inset-x-0 top-0 p-3 flex items-center justify-between">
+                        <span className="inline-flex items-center gap-2 rounded-md px-2 py-1 text-xs ring-1 ring-white/10 bg-black/40 text-gray-200">
+                          <Video className="w-3 h-3" />
+                          Session Walkthrough
+                        </span>
+                      </div>
+                      <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/70 to-transparent">
+                        <div className="inline-flex items-center gap-2 rounded-md px-2 py-1 text-xs ring-1 ring-white/10 bg-white/10 text-gray-200">
+                          <Zap className="w-3.5 h-3.5 text-amber-300" />
+                          Logic → Pricing in 60 minutes
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <video 
+                      ref={videoRef}
+                      className="absolute inset-0 w-full h-full object-cover rounded-2xl"
+                      controls={isVideoPlaying}
+                      muted={!isVideoPlaying}
+                      preload="metadata"
+                      onLoadStart={() => setIsVideoPlaying(true)}
+                      onPlay={() => setIsVideoPlaying(true)}
+                    >
+                      <source src="/videos/day4-backend-business-logic.mp4" type="video/mp4" />
+                      <source src="/videos/day4-backend-business-logic.webm" type="video/webm" />
+                      <p className="absolute inset-0 flex items-center justify-center text-white bg-black/60">
+                        Your browser does not support the video tag.
+                      </p>
+                    </video>
+                  )}
                 </div>
               </div>
             </div>
